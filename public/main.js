@@ -95,6 +95,7 @@ btnPrev.onclick = ()=>{
             let res = JSON.parse(req.response)
             document.getElementById("list").innerHTML = res.map((item) => `<li>${item.id}</li>`).join('')
             page -= 1
+            pageNumber.textContent = `第${page}页 共3页`
             checkBtnAvailbility();
         }    
     }
@@ -110,6 +111,7 @@ btnNext.onclick = ()=>{
             let res = JSON.parse(req.response)
             document.getElementById("list").innerHTML = res.map((item) => `<li>${item.id}</li>`).join('')
             page += 1
+            pageNumber.textContent = `第${page}页 共3页`
             checkBtnAvailbility();
         }    
     }
