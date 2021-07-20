@@ -1,93 +1,117 @@
-let n = 1;
-getPage.onclick = () => {
-  const request = new XMLHttpRequest();
-  request.open("GET", `/page${n+1}`);
-  request.onreadystatechange = () => {
-    if (request.readyState === 4 && request.status === 200) {
-      const array = JSON.parse(request.response);
-      array.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = item.id;
-        xxx.appendChild(li);
-      });
-      n+=1
-    }
-  };
-  request.send();
-};
-getJSON.onclick = () => {
-  const request = new XMLHttpRequest();
-  request.open("get", "/5.json");
-  request.onreadystatechange = () => {
-    if (request.readyState === 4 && request.status === 200) {
-      console.log(typeof request.response);
-      console.log(request.response);
-      const bool = JSON.parse(request.response);
-      console.log(typeof bool);
-      console.log(bool);
-    }
-  };
-  request.send();
-};
-getXML.onclick = () => {
-  const request = new XMLHttpRequest();
-  request.open("GET", "/4.xml");
-  request.onreadystatechange = () => {
-    if (request.readyState === 4 && request.status === 200) {
-      const dom = request.responseXML;
-      const text = dom.getElementsByTagName("warning")[0].textContent;
-      console.log(text.trim());
-    }
-  };
-  request.send();
-};
-getHTML.onclick = () => {
-  const request = new XMLHttpRequest();
-  request.open("GET", "/3.htm");
-  request.onload = () => {
-    // 创建 div 标签
-    const div = document.createElement("div");
-    // 填写 div 内容
-    div.innerHTML = request.response;
-    // 插入到身体里
-    document.body.appendChild(div);
-  };
-  request.onerror = () => {};
-  request.send();
-};
-getJS.onclick = () => {
-  const request = new XMLHttpRequest();
-  request.open("GET", "/2.js");
-  request.onload = () => {
-    // 创建 script 标签
-    const script = document.createElement("script");
-    // 填写 script 内容
-    script.innerHTML = request.response;
-    // 插到身体里
-    document.body.appendChild(script);
-  };
-  request.onerror = () => {};
-  request.send();
+btnCSS.onclick = () => {
+  let req = new XMLHttpRequest()
+  req.open("GET", "style.css")
+  req.onreadystatechange = ()=>{
+      if(req.readyState === 4 && req.status === 200){
+        let res = req.response
+        let d = document.createElement("style")
+        d.innerHTML = res
+        document.head.appendChild(d)
+      }
+  }
+  req.send()
 };
 
-getCSS.onclick = () => {
-  const request = new XMLHttpRequest();
-  request.open("GET", "/style.css"); // readyState = 1
-  request.onreadystatechange = () => {
-    console.log(request.readyState);
-    // 下载完成，但不知道是成功 2xx 还是失败 4xx 5xx
-    if (request.readyState === 4) {
-      if (request.status >= 200 && request.status < 300) {
-        // 创建 style 标签
-        const style = document.createElement("style");
-        // 填写 style 内容
-        style.innerHTML = request.response;
-        // 插到头里面
-        document.head.appendChild(style);
-      } else {
-        alert("加载 CSS 失败");
-      }
+btnJS.onclick = ()=>{
+    let req = new XMLHttpRequest()
+    req.open("GET", "2.js")
+    req.onreadystatechange = ()=>{
+        if(req.readyState === 4 && req.status === 200){
+            let res = req.response
+            let d = document.createElement("script")
+            d.innerHTML = res
+            document.body.appendChild(d)
+        }    
     }
-  };
-  request.send(); // readyState = 2
-};
+    req.send()
+}
+
+btnHTML.onclick = ()=>{
+    let req = new XMLHttpRequest()
+    req.open("GET", "3.html")
+    req.onreadystatechange = ()=>{
+        if(req.readyState === 4 && req.status === 200){
+            let res = req.response
+            let d = document.createElement("div")
+            d.innerHTML = res
+            document.body.appendChild(d)
+        }    
+    }
+    req.send()
+}
+
+
+btnXML.onclick = ()=>{
+    let req = new XMLHttpRequest()
+    req.open("GET", "4.xml")
+    req.onreadystatechange = ()=>{
+        if(req.readyState === 4 && req.status === 200){
+            //XML解析的时候用responseXML
+            let res = req.responseXML
+            let d = document.createElement("div")
+            console.log(res)
+            d.innerHTML = res.getElementsByTagName("warning")[0].textContent
+            document.body.appendChild(d)
+        }    
+    }
+    req.send()
+}
+
+btnJSON.onclick = ()=>{
+    let req = new XMLHttpRequest()
+    req.open("GET", "5.json")
+    req.onreadystatechange = ()=>{
+        if(req.readyState === 4 && req.status === 200){
+            let res = req.response
+            alert(JSON.parse(res)[0].name);
+        }    
+    }
+    req.send()
+}
+
+let page = 1
+
+const checkBtnAvailbility = ()=>{
+    if(page === 1){
+        btnPrev.setAttribute("disabled","")
+    }
+    if(page === 3){
+        btnNext.setAttribute("disabled","")
+    }
+    if(page > 1 && page < 3){
+        btnPrev.removeAttribute("disabled")
+        btnNext.removeAttribute("disabled")
+    }
+}
+
+checkBtnAvailbility()
+
+
+btnPrev.onclick = ()=>{
+    let req = new XMLHttpRequest()
+    req.open("GET", `page${page - 1}`);
+    req.onreadystatechange = ()=>{
+        if(req.readyState === 4 && req.status === 200){
+            let res = JSON.parse(req.response)
+            document.getElementById("list").innerHTML = res.map((item) => `<li>${item.id}</li>`).join('')
+            page -= 1
+            checkBtnAvailbility();
+        }    
+    }
+    req.send()
+}
+
+
+btnNext.onclick = ()=>{
+    let req = new XMLHttpRequest()
+    req.open("GET", `page${page + 1}`);
+    req.onreadystatechange = ()=>{
+        if(req.readyState === 4 && req.status === 200){
+            let res = JSON.parse(req.response)
+            document.getElementById("list").innerHTML = res.map((item) => `<li>${item.id}</li>`).join('')
+            page += 1
+            checkBtnAvailbility();
+        }    
+    }
+    req.send()
+}
